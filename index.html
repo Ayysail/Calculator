@@ -1,366 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulletproof Scientific Calculator</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* This tells the browser how to load your local font file */
+        @font-face {
+            font-family: 'DSDigital';
+            src: url('./ds-digital-normal.TTF') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
 
-  <style>
-    @font-face {
-      font-family: "CalculatorDisplay";
-      src: local("Digital-7"), local("DS-Digital"), local("Orbitron");
-    }
+        /* --- Themes --- */
+        :root, body.midnight-blue {
+            --bg: #0f141e; 
+            --calc-bg: #1a2130;
+            --screen-text: #e3e2e6;
+            --btn-num-bg: #282f3e; 
+            --btn-num-text: #e3e2e6; 
+            --btn-op-bg: #004a77; 
+            --btn-op-text: #c2e7ff; 
+            --btn-sci-bg: #3f4759; 
+            --btn-sci-text: #dbe2f9; 
+            --btn-eq-bg: #a8c7fa; 
+            --btn-eq-text: #062e6f; 
+            /* Priority: Digital -> Roboto */
+            --calc-font: 'DSDigital', 'Roboto', sans-serif;
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        body.blurple {
+            --bg: #111116;
+            --calc-bg: #1b1b24; 
+            --screen-text: #e4e1e6;
+            --btn-num-bg: #2b2a33; 
+            --btn-num-text: #e4e1e6;
+            --btn-op-bg: #4a4458; 
+            --btn-op-text: #e8def8;
+            --btn-sci-bg: #4a3e68; 
+            --btn-sci-text: #eaddff;
+            --btn-eq-bg: #d0bcff; 
+            --btn-eq-text: #381e72;
+            --calc-font: 'DSDigital', 'Roboto', sans-serif;
+        }
 
-    body {
-      font-family: Inter, Arial, sans-serif;
-      background: linear-gradient(180deg, #fff8d7 0%, #ffe59a 100%);
-      color: #1b1b1b;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+        body.yellow-banana {
+            --bg: #e6dfd1;
+            --calc-bg: #fff8eb; 
+            --screen-text: #1f1b16;
+            --btn-num-bg: #f4e3c9; 
+            --btn-num-text: #1f1b16;
+            --btn-op-bg: #ebd1a4; 
+            --btn-op-text: #412d00;
+            --btn-sci-bg: #e6c587; 
+            --btn-sci-text: #261900;
+            --btn-eq-bg: #ffba26; 
+            --btn-eq-text: #412d00;
+            --calc-font: 'DSDigital', 'Roboto', sans-serif;
+        }
 
-    .container {
-      width: min(1150px, 92%);
-      margin: auto;
-    }
+        body.vintage {
+            --bg: #2b1d12;
+            --calc-bg: #3e2a1c;
+            --screen-text: #00ff41;
+            --btn-num-bg: #4e3626; 
+            --btn-num-text: #00ff41; 
+            --btn-op-bg: #5d4037; 
+            --btn-op-text: #a5d6a7;
+            --btn-sci-bg: #3e2723; 
+            --btn-sci-text: #81c784;
+            --btn-eq-bg: #00ff41; 
+            --btn-eq-text: #1b1b1b;
+            --calc-font: 'DSDigital', 'Roboto', sans-serif;
+        }
 
-    header {
-      padding: 28px 0;
-    }
+        body.cyberpunk {
+            --bg: #090a0f;
+            --calc-bg: #12141d;
+            --screen-text: #00ffff; 
+            --btn-num-bg: #1a1c29;
+            --btn-num-text: #ff00ff; 
+            --btn-op-bg: #2d00f7;
+            --btn-op-text: #00ffff;
+            --btn-sci-bg: #ff006e;
+            --btn-sci-text: #ffffff;
+            --btn-eq-bg: #00ffff;
+            --btn-eq-text: #000000;
+            /* Cyber uses Orbitron as its specific fallback */
+            --calc-font: 'DSDigital', 'Orbitron', 'Roboto', sans-serif; 
+        }
 
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-    }
+        body.android {
+            --bg: #073042; 
+            --calc-bg: #1e1e1e; 
+            --screen-text: #3DDC84; 
+            --btn-num-bg: #2d2d2d;
+            --btn-num-text: #ffffff;
+            --btn-op-bg: #3DDC84; 
+            --btn-op-text: #000000;
+            --btn-sci-bg: #073042;
+            --btn-sci-text: #3DDC84;
+            --btn-eq-bg: #ffffff;
+            --btn-eq-text: #073042;
+            --calc-font: 'DSDigital', 'Roboto', sans-serif;
+        }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+        /* --- Base Layout --- */
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            font-family: var(--calc-font);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s;
+        }
 
-    .brand img {
-      width: 60px;
-      height: 60px;
-      border-radius: 18px;
-    }
+        .calculator {
+            background-color: var(--calc-bg);
+            width: 100%;
+            max-width: 400px; 
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: background-color 0.3s;
+        }
 
-    .brand h1 {
-      font-size: 1.8rem;
-      font-weight: 800;
-    }
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
 
-    .hero {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 50px;
-      align-items: center;
-      padding: 40px 0 90px;
-    }
+        .theme-btn {
+            background-color: var(--btn-sci-bg);
+            color: var(--btn-sci-text);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: var(--calc-font);
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-    .hero-text h2 {
-      font-size: clamp(3rem, 7vw, 5.5rem);
-      line-height: 0.95;
-      margin-bottom: 22px;
-      font-weight: 900;
-    }
+        .screen {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            padding: 20px;
+            color: var(--screen-text);
+            font-family: var(--calc-font);
+            font-size: 3.5rem;
+            text-align: right;
+            word-break: break-all;
+            line-height: 1.1;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
 
-    .calc-font {
-      font-family: "CalculatorDisplay", "Courier New", monospace;
-      letter-spacing: 4px;
-      background: #1c2a1f;
-      color: #b8ff84;
-      display: inline-block;
-      padding: 12px 18px;
-      border-radius: 18px;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
-      margin-bottom: 18px;
-    }
+        .keypad {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px;
+            background-color: var(--calc-bg);
+            transition: background-color 0.3s;
+        }
 
-    .hero-text p {
-      font-size: 1.15rem;
-      line-height: 1.7;
-      color: #343434;
-      margin-bottom: 30px;
-      max-width: 640px;
-    }
+        .sci-pad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
 
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-    }
+        .num-pad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
 
-    .btn {
-      text-decoration: none;
-      padding: 16px 28px;
-      border-radius: 18px;
-      font-size: 1rem;
-      font-weight: 700;
-      transition: 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-    }
+        button {
+            border: none;
+            border-radius: 50px;
+            font-family: var(--calc-font);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 15px 0;
+            transition: opacity 0.1s, background-color 0.3s, color 0.3s;
+        }
 
-    .btn-primary {
-      background: #111;
-      color: white;
-    }
+        button:active { opacity: 0.7; }
 
-    .btn-secondary {
-      background: white;
-      color: #111;
-      border: 2px solid #111;
-    }
+        .btn-sci { background-color: var(--btn-sci-bg); color: var(--btn-sci-text); font-size: 1.2rem; }
+        .btn-op { background-color: var(--btn-op-bg); color: var(--btn-op-text); }
+        .btn-num { background-color: var(--btn-num-bg); color: var(--btn-num-text); font-size: 1.8rem; }
+        .btn-eq { background-color: var(--btn-eq-bg); color: var(--btn-eq-text); }
 
-    .btn:hover {
-      transform: translateY(-4px) scale(1.02);
-    }
-
-    .calculator-preview-image {
-      width: 100%;
-      display: block;
-      border-radius: 32px;
-      filter: drop-shadow(0 25px 45px rgba(0,0,0,0.22));
-    }
-
-    .calculator-card {
-      background: rgba(255,255,255,0.72);
-      backdrop-filter: blur(18px);
-      border-radius: 36px;
-      padding: 28px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.18);
-      border: 1px solid rgba(255,255,255,0.6);
-    }
-
-    .screen {
-      background: #1d271e;
-      color: #a5ff78;
-      border-radius: 24px;
-      padding: 24px;
-      text-align: right;
-      font-size: 2.7rem;
-      font-family: "CalculatorDisplay", "Courier New", monospace;
-      letter-spacing: 4px;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
-
-    .key {
-      aspect-ratio: 1;
-      border-radius: 22px;
-      border: none;
-      background: white;
-      font-size: 1.2rem;
-      font-weight: 700;
-      box-shadow: 0 10px 18px rgba(0,0,0,0.08);
-    }
-
-    .key.yellow {
-      background: #ffd84f;
-    }
-
-    .features {
-      padding: 40px 0 90px;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 2.8rem;
-      margin-bottom: 50px;
-      font-weight: 900;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
-    }
-
-    .feature {
-      background: rgba(255,255,255,0.7);
-      padding: 28px;
-      border-radius: 28px;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.08);
-      border: 1px solid rgba(255,255,255,0.6);
-    }
-
-    .feature h3 {
-      font-size: 1.4rem;
-      margin-bottom: 14px;
-    }
-
-    .feature p {
-      line-height: 1.7;
-      color: #444;
-    }
-
-    .showcase {
-      padding-bottom: 100px;
-      text-align: center;
-    }
-
-    .showcase h2 {
-      font-size: clamp(2.4rem, 6vw, 4rem);
-      margin-bottom: 26px;
-      font-weight: 900;
-    }
-
-    .showcase-frame {
-      display: inline-block;
-      width: min(100%, 1000px);
-    }
-
-    .showcase-frame img {
-      width: 100%;
-      border-radius: 20px;
-      display: block;
-    }
-
-    .alt-text {
-      margin-top: 16px;
-      color: #555;
-      font-size: 0.95rem;
-    }
-
-    footer {
-      padding: 40px 0 60px;
-      text-align: center;
-      color: #444;
-      font-size: 0.95rem;
-    }
-
-    @media (max-width: 900px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-text {
-        text-align: center;
-      }
-
-      .button-row {
-        justify-content: center;
-      }
-    }
-  </style>
+        @media (min-width: 768px) {
+            .calculator { max-width: 800px; min-height: auto; height: 600px; border-radius: 20px; }
+            .keypad { flex-direction: row; flex-grow: 0; }
+            .sci-pad { grid-template-columns: repeat(2, 1fr); flex: 1; }
+            .num-pad { flex: 2; }
+            button { padding: 20px 0; }
+        }
+    </style>
 </head>
-<body>
-  <header>
-    <div class="container nav">
-      <div class="brand">
-        <img src="logo.png" alt="Calculator App Icon" />
-        <h1>Calculator</h1>
-      </div>
+<body class="midnight-blue">
+
+    <div class="calculator">
+        <div class="header">
+            <button class="theme-btn" onclick="toggleTheme()" id="themeToggleBtn">Theme: Midnight</button>
+        </div>
+        
+        <div class="screen" id="display">0</div>
+
+        <div class="keypad">
+            <div class="sci-pad">
+                <button class="btn-sci" onclick="input('sin(')">sin</button>
+                <button class="btn-sci" onclick="input('cos(')">cos</button>
+                <button class="btn-sci" onclick="input('tan(')">tan</button>
+                <button class="btn-sci" onclick="input('log(')">log</button>
+                <button class="btn-sci" onclick="input('ln(')">ln</button>
+                <button class="btn-sci" onclick="input('sqrt(')">√</button>
+                <button class="btn-sci" onclick="input('^')">^</button>
+                <button class="btn-sci" onclick="input('%')">%</button>
+                <button class="btn-sci" onclick="input('π')">π</button>
+                <button class="btn-sci" onclick="input('e')">e</button>
+            </div>
+
+            <div class="num-pad">
+                <button class="btn-op" onclick="clearDisplay()">AC</button>
+                <button class="btn-op" onclick="input('(')">(</button>
+                <button class="btn-op" onclick="input(')')">)</button>
+                <button class="btn-op" onclick="input('/')">÷</button>
+
+                <button class="btn-num" onclick="input('7')">7</button>
+                <button class="btn-num" onclick="input('8')">8</button>
+                <button class="btn-num" onclick="input('9')">9</button>
+                <button class="btn-op" onclick="input('*')">×</button>
+
+                <button class="btn-num" onclick="input('4')">4</button>
+                <button class="btn-num" onclick="input('5')">5</button>
+                <button class="btn-num" onclick="input('6')">6</button>
+                <button class="btn-op" onclick="input('-')">−</button>
+
+                <button class="btn-num" onclick="input('1')">1</button>
+                <button class="btn-num" onclick="input('2')">2</button>
+                <button class="btn-num" onclick="input('3')">3</button>
+                <button class="btn-op" onclick="input('+')">+</button>
+
+                <button class="btn-num" onclick="input('0')">0</button>
+                <button class="btn-num" onclick="input('.')">.</button>
+                <button class="btn-op" onclick="deleteLast()">DEL</button>
+                <button class="btn-eq" onclick="calculate()">=</button>
+            </div>
+        </div>
     </div>
-  </header>
 
-  <main>
-    <section class="container hero">
-      <div class="hero-text">
-        <div class="calc-font">CALCULATOR READY_</div>
+    <script>
+        const themeLibrary = [
+            { class: 'midnight-blue', name: 'Midnight' },
+            { class: 'blurple',       name: 'Blurple' },
+            { class: 'yellow-banana', name: 'Banana' },
+            { class: 'vintage',       name: 'Vintage' },
+            { class: 'cyberpunk',     name: 'Cyber' },
+            { class: 'android',       name: 'Android' }
+        ];
 
-        <h2>
-          Looks Like a<br />
-          Real Calculator.
-        </h2>
+        let currentThemeIndex = 0;
 
-        <p>
-          Calculator brings the feeling of a physical calculator to your browser.
-          With a classic digital display font, fun themes like Banana, Vintage,
-          Android, and more, it feels nostalgic while still modern.
-        </p>
+        function initTheme() {
+            const hash = window.location.hash.replace('#', '').toLowerCase();
+            const savedTheme = localStorage.getItem('calcTheme');
+            const hashIndex = themeLibrary.findIndex(t => t.name.toLowerCase() === hash);
+            
+            if (hashIndex !== -1) {
+                currentThemeIndex = hashIndex;
+                localStorage.setItem('calcTheme', currentThemeIndex);
+            } 
+            else if (savedTheme !== null) {
+                currentThemeIndex = parseInt(savedTheme);
+            }
+            applyTheme();
+        }
 
-        <div class="button-row">
-          <a class="btn btn-primary" href="web.html">
-            Try as Web App
-          </a>
+        function toggleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themeLibrary.length;
+            localStorage.setItem('calcTheme', currentThemeIndex);
+            if(window.location.hash) {
+                history.replaceState(null, null, ' ');
+            }
+            applyTheme();
+        }
 
-          <a
-            class="btn btn-secondary"
-            href="https://github.com/Ayysail/Calculator/releases"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Get It Native
-          </a>
-        </div>
-      </div>
+        function applyTheme() {
+            const currentTheme = themeLibrary[currentThemeIndex];
+            document.body.className = currentTheme.class;
+            document.getElementById('themeToggleBtn').innerText = `Theme: ${currentTheme.name}`;
+        }
 
-      <img
-        class="calculator-preview-image"
-        src="showcase2.png"
-        alt="Calculator app preview"
-      />
-    </section>
+        initTheme();
+        window.addEventListener('hashchange', initTheme);
 
-    <section class="features container">
-      <h2 class="section-title">Why People Like Calculator</h2>
+        const display = document.getElementById('display');
 
-      
-        <div class="feature">
-          <h3>🧮 Real Calculator Feel</h3>
-          <p>
-            Designed to feel like a physical calculator with digital-style fonts,
-            chunky buttons, and a nostalgic layout.
-          </p>
-        </div>
+        function input(val) {
+            if (display.innerText === '0' || display.innerText === 'Error') {
+                if (['.', '+', '-', '*', '/', '^', '%'].includes(val)) {
+                    display.innerText += val;
+                } else {
+                    display.innerText = val;
+                }
+            } else {
+                display.innerText += val;
+            }
+        }
 
-        <div class="feature">
-          <h3>🎨 Funny & Cool Themes</h3>
-          <p>
-            Switch between themes like Yellow Banana, Vintage, Android,
-            dark themes, colorful looks, and more weird fun ideas.
-          </p>
-        </div>
+        function clearDisplay() { display.innerText = '0'; }
 
-        <div class="feature">
-       <h3>🛠️ Open Source for Personal Use</h3>
-          <p>
-            Calculator is Creative Commons NonCommercial licensed.
-            Explore the source code, add your own themes, customize the look,
-            learn how it works, and build on it for personal projects.
-          </p>
-        </div>
-      </div>
-    </section>
+        function deleteLast() {
+            if (display.innerText.length === 1 || display.innerText === 'Error') {
+                display.innerText = '0';
+            } else {
+                display.innerText = display.innerText.slice(0, -1);
+            }
+        }
 
-    <section class="showcase container">
-      <h2>So Good Its Tastey 😋</h2>
+        const sin = (deg) => Math.sin(deg * (Math.PI / 180));
+        const cos = (deg) => Math.cos(deg * (Math.PI / 180));
+        const tan = (deg) => Math.tan(deg * (Math.PI / 180));
+        const log = (val) => Math.log10(val);
+        const ln = (val) => Math.log(val);
+        const sqrt = (val) => Math.sqrt(val);
 
-      <div class="showcase-frame">
-        <img
-          src="showcase.png"
-          alt="Image of the app on Browser On Computer showing verison 1., with Banana (Formerly and used in advesting and website as Yellow Banana)"
-        />
-      </div>
+        function calculate() {
+            let expr = display.innerText
+                .replace(/×/g, '*')
+                .replace(/÷/g, '/')
+                .replace(/−/g, '-')
+                .replace(/\^/g, '**')
+                .replace(/%/g, '/100')
+                .replace(/π/g, 'Math.PI')
+                .replace(/e/g, 'Math.E');
 
-      <p class="alt-text">
-        Image of the app on Browser On Computer showing verison 1., with Banana
-        (Formerly and used in advesting and website as Yellow Banana)
-      </p>
-    </section>
-  </main>
-
-  <footer>
-    Calculator — Simple, fun, and actually feels like a calculator.<br /><br />
-    Open source for personal use under Creative Commons NonCommercial.
-  </footer>
+            try {
+                const safeEval = new Function('sin', 'cos', 'tan', 'log', 'ln', 'sqrt', `return ${expr};`);
+                let result = safeEval(sin, cos, tan, log, ln, sqrt);
+                
+                if (!isFinite(result) || isNaN(result)) {
+                    display.innerText = 'Error';
+                    return;
+                }
+                if(result % 1 !== 0) result = parseFloat(result.toFixed(8));
+                display.innerText = result;
+            } catch (error) {
+                display.innerText = 'Error';
+            }
+        }
+    </script>
 </body>
 </html>
