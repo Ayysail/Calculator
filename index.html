@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator</title>
+
+  <style>
+    @font-face {
+      font-family: "CalculatorDisplay";
+      src: local("Digital-7"), local("DS-Digital"), local("Orbitron");
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #fff8d7 0%, #ffe59a 100%);
+      color: #1b1b1b;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: min(1150px, 92%);
+      margin: auto;
+    }
+
+    header {
+      padding: 28px 0;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand img {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+    }
+
+    .brand h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 50px;
+      align-items: center;
+      padding: 40px 0 90px;
+    }
+
+    .hero-text h2 {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 0.95;
+      margin-bottom: 22px;
+      font-weight: 900;
+    }
+
+    .calc-font {
+      font-family: "CalculatorDisplay", "Courier New", monospace;
+      letter-spacing: 4px;
+      background: #1c2a1f;
+      color: #b8ff84;
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 18px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+      margin-bottom: 18px;
+    }
+
+    .hero-text p {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: #343434;
+      margin-bottom: 30px;
+      max-width: 640px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 16px 28px;
+      border-radius: 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    .btn-primary {
+      background: #111;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #111;
+      border: 2px solid #111;
+    }
+
+    .btn:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .calculator-preview-image {
+      width: 100%;
+      display: block;
+      border-radius: 32px;
+      filter: drop-shadow(0 25px 45px rgba(0,0,0,0.22));
+    }
+
+    .calculator-card {
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(18px);
+      border-radius: 36px;
+      padding: 28px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    .screen {
+      background: #1d271e;
+      color: #a5ff78;
+      border-radius: 24px;
+      padding: 24px;
+      text-align: right;
+      font-size: 2.7rem;
+      font-family: "CalculatorDisplay", "Courier New", monospace;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .key {
+      aspect-ratio: 1;
+      border-radius: 22px;
+      border: none;
+      background: white;
+      font-size: 1.2rem;
+      font-weight: 700;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+    }
+
+    .key.yellow {
+      background: #ffd84f;
+    }
+
+    .features {
+      padding: 40px 0 90px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.8rem;
+      margin-bottom: 50px;
+      font-weight: 900;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+    }
+
+    .feature {
+      background: rgba(255,255,255,0.7);
+      padding: 28px;
+      border-radius: 28px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    .feature h3 {
+      font-size: 1.4rem;
+      margin-bottom: 14px;
+    }
+
+    .feature p {
+      line-height: 1.7;
+      color: #444;
+    }
+
+    .showcase {
+      padding-bottom: 100px;
+      text-align: center;
+    }
+
+    .showcase h2 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      margin-bottom: 26px;
+      font-weight: 900;
+    }
+
+    .showcase-frame {
+      display: inline-block;
+      width: min(100%, 1000px);
+    }
+
+    .showcase-frame img {
+      width: 100%;
+      border-radius: 20px;
+      display: block;
+    }
+
+    .alt-text {
+      margin-top: 16px;
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      padding: 40px 0 60px;
+      text-align: center;
+      color: #444;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-text {
+        text-align: center;
+      }
+
+      .button-row {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <img src="logo.png" alt="Calculator App Icon" />
+        <h1>Calculator</h1>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="container hero">
+      <div class="hero-text">
+        <div class="calc-font">CALCULATOR READY_</div>
+
+        <h2>
+          Looks Like a<br />
+          Real Calculator.
+        </h2>
+
+        <p>
+          Calculator brings the feeling of a physical calculator to your browser.
+          With a classic digital display font, fun themes like Banana, Vintage,
+          Android, and more, it feels nostalgic while still modern.
+        </p>
+
+        <div class="button-row">
+          <a class="btn btn-primary" href="web.html">
+            Try as Web App
+          </a>
+
+          <a
+            class="btn btn-secondary"
+            href="https://github.com/Ayysail/Calculator/releases"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get It Native
+          </a>
+        </div>
+      </div>
+
+      <img
+        class="calculator-preview-image"
+        src="showcase2.png"
+        alt="Calculator app preview"
+      />
+    </section>
+
+    <section class="features container">
+      <h2 class="section-title">Why People Like Calculator</h2>
+
+      
+        <div class="feature">
+          <h3>🧮 Real Calculator Feel</h3>
+          <p>
+            Designed to feel like a physical calculator with digital-style fonts,
+            chunky buttons, and a nostalgic layout.
+          </p>
+        </div>
+
+        <div class="feature">
+          <h3>🎨 Funny & Cool Themes</h3>
+          <p>
+            Switch between themes like Yellow Banana, Vintage, Android,
+            dark themes, colorful looks, and more weird fun ideas.
+          </p>
+        </div>
+
+        <div class="feature">
+       <h3>🛠️ Open Source for Personal Use</h3>
+          <p>
+            Calculator is Creative Commons NonCommercial licensed.
+            Explore the source code, add your own themes, customize the look,
+            learn how it works, and build on it for personal projects.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="showcase container">
+      <h2>So Good Its Tastey 😋</h2>
+
+      <div class="showcase-frame">
+        <img
+          src="showcase.png"
+          alt="Image of the app on Browser On Computer showing verison 1., with Banana (Formerly and used in advesting and website as Yellow Banana)"
+        />
+      </div>
+
+      <p class="alt-text">
+        Image of the app on Browser On Computer showing verison 1., with Banana
+        (Formerly and used in advesting and website as Yellow Banana)
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    Calculator — Simple, fun, and actually feels like a calculator.<br /><br />
+    Open source for personal use under Creative Commons NonCommercial.
+  </footer>
+</body>
+</html>

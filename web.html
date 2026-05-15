@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulletproof Scientific Calculator</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Local Digital Font (Make sure this file is in the same folder if you use it) */
+        @font-face {
+            font-family: 'DSDigital';
+            src: url('./ds-digital-normal.TTF') format('truetype');
+        }
+
+        /* --- Themes --- */
+        :root, body.midnight-blue {
+            --bg: #0f141e; 
+            --calc-bg: #1a2130;
+            --screen-text: #e3e2e6;
+            --btn-num-bg: #282f3e; 
+            --btn-num-text: #e3e2e6; 
+            --btn-op-bg: #004a77; 
+            --btn-op-text: #c2e7ff; 
+            --btn-sci-bg: #3f4759; 
+            --btn-sci-text: #dbe2f9; 
+            --btn-eq-bg: #a8c7fa; 
+            --btn-eq-text: #062e6f; 
+            --calc-font: 'Roboto', sans-serif;
+        }
+
+        body.blurple {
+            --bg: #111116;
+            --calc-bg: #1b1b24; 
+            --screen-text: #e4e1e6;
+            --btn-num-bg: #2b2a33; 
+            --btn-num-text: #e4e1e6;
+            --btn-op-bg: #4a4458; 
+            --btn-op-text: #e8def8;
+            --btn-sci-bg: #4a3e68; 
+            --btn-sci-text: #eaddff;
+            --btn-eq-bg: #d0bcff; 
+            --btn-eq-text: #381e72;
+            --calc-font: 'Roboto', sans-serif;
+        }
+
+        body.yellow-banana {
+            --bg: #e6dfd1;
+            --calc-bg: #fff8eb; 
+            --screen-text: #1f1b16;
+            --btn-num-bg: #f4e3c9; 
+            --btn-num-text: #1f1b16;
+            --btn-op-bg: #ebd1a4; 
+            --btn-op-text: #412d00;
+            --btn-sci-bg: #e6c587; 
+            --btn-sci-text: #261900;
+            --btn-eq-bg: #ffba26; 
+            --btn-eq-text: #412d00;
+            --calc-font: 'Roboto', sans-serif;
+        }
+
+        body.vintage {
+            --bg: #2b1d12;
+            --calc-bg: #3e2a1c;
+            --screen-text: #00ff41;
+            --btn-num-bg: #4e3626; 
+            --btn-num-text: #00ff41; 
+            --btn-op-bg: #5d4037; 
+            --btn-op-text: #a5d6a7;
+            --btn-sci-bg: #3e2723; 
+            --btn-sci-text: #81c784;
+            --btn-eq-bg: #00ff41; 
+            --btn-eq-text: #1b1b1b;
+            --calc-font: 'Roboto', sans-serif;
+        }
+        body.vintage #display {
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        body.cyberpunk {
+            --bg: #090a0f;
+            --calc-bg: #12141d;
+            --screen-text: #00ffff; 
+            --btn-num-bg: #1a1c29;
+            --btn-num-text: #ff00ff; 
+            --btn-op-bg: #2d00f7;
+            --btn-op-text: #00ffff;
+            --btn-sci-bg: #ff006e;
+            --btn-sci-text: #ffffff;
+            --btn-eq-bg: #00ffff;
+            --btn-eq-text: #000000;
+            --calc-font: 'Orbitron', sans-serif; 
+        }
+        body.cyberpunk #display {
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+        }
+
+        body.android {
+            --bg: #073042; 
+            --calc-bg: #1e1e1e; 
+            --screen-text: #3DDC84; 
+            --btn-num-bg: #2d2d2d;
+            --btn-num-text: #ffffff;
+            --btn-op-bg: #3DDC84; 
+            --btn-op-text: #000000;
+            --btn-sci-bg: #073042;
+            --btn-sci-text: #3DDC84;
+            --btn-eq-bg: #ffffff;
+            --btn-eq-text: #073042;
+            --calc-font: 'Roboto', sans-serif;
+        }
+
+        /* --- Base Layout (Mobile First) --- */
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            font-family: var(--calc-font, 'Roboto', sans-serif);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s;
+        }
+
+        .calculator {
+            background-color: var(--calc-bg);
+            width: 100%;
+            max-width: 400px; 
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: background-color 0.3s;
+        }
+
+        /* Header & Theme Button */
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .theme-btn {
+            background-color: var(--btn-sci-bg);
+            color: var(--btn-sci-text);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: var(--calc-font, 'Roboto', sans-serif);
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Screen */
+        .screen {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            padding: 20px;
+            color: var(--screen-text);
+            font-family: 'DSDigital', var(--calc-font, 'Roboto', monospace);
+            font-size: 3.5rem;
+            text-align: right;
+            word-break: break-all;
+            line-height: 1.1;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        /* Keypad Container */
+        .keypad {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px;
+            background-color: var(--calc-bg);
+            transition: background-color 0.3s;
+        }
+
+        /* Button Grids */
+        .sci-pad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .num-pad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            border: none;
+            border-radius: 50px;
+            font-family: var(--calc-font, 'Roboto', sans-serif);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 15px 0;
+            transition: opacity 0.1s, background-color 0.3s, color 0.3s;
+        }
+
+        button:active {
+            opacity: 0.7;
+        }
+
+        .btn-sci { background-color: var(--btn-sci-bg); color: var(--btn-sci-text); font-size: 1.2rem; }
+        .btn-op { background-color: var(--btn-op-bg); color: var(--btn-op-text); }
+        .btn-num { background-color: var(--btn-num-bg); color: var(--btn-num-text); font-size: 1.8rem; }
+        .btn-eq { background-color: var(--btn-eq-bg); color: var(--btn-eq-text); }
+
+        /* --- Desktop Layout --- */
+        @media (min-width: 768px) {
+            .calculator {
+                max-width: 800px; 
+                min-height: auto;
+                height: 600px; 
+                border-radius: 20px;
+            }
+
+            .keypad {
+                flex-direction: row; 
+                flex-grow: 0;
+            }
+
+            .sci-pad {
+                grid-template-columns: repeat(2, 1fr); 
+                flex: 1;
+            }
+
+            .num-pad {
+                flex: 2;
+            }
+            
+            button {
+                padding: 20px 0; 
+            }
+        }
+    </style>
+</head>
+<body class="midnight-blue">
+
+    <div class="calculator">
+        <div class="header">
+            <button class="theme-btn" onclick="toggleTheme()" id="themeToggleBtn">Theme: Midnight</button>
+        </div>
+        
+        <div class="screen" id="display">0</div>
+
+        <div class="keypad">
+            <div class="sci-pad">
+                <button class="btn-sci" onclick="input('sin(')">sin</button>
+                <button class="btn-sci" onclick="input('cos(')">cos</button>
+                <button class="btn-sci" onclick="input('tan(')">tan</button>
+                <button class="btn-sci" onclick="input('log(')">log</button>
+                <button class="btn-sci" onclick="input('ln(')">ln</button>
+                <button class="btn-sci" onclick="input('sqrt(')">√</button>
+                <button class="btn-sci" onclick="input('^')">^</button>
+                <button class="btn-sci" onclick="input('%')">%</button>
+                <button class="btn-sci" onclick="input('π')">π</button>
+                <button class="btn-sci" onclick="input('e')">e</button>
+            </div>
+
+            <div class="num-pad">
+                <button class="btn-op" onclick="clearDisplay()">AC</button>
+                <button class="btn-op" onclick="input('(')">(</button>
+                <button class="btn-op" onclick="input(')')">)</button>
+                <button class="btn-op" onclick="input('/')">÷</button>
+
+                <button class="btn-num" onclick="input('7')">7</button>
+                <button class="btn-num" onclick="input('8')">8</button>
+                <button class="btn-num" onclick="input('9')">9</button>
+                <button class="btn-op" onclick="input('*')">×</button>
+
+                <button class="btn-num" onclick="input('4')">4</button>
+                <button class="btn-num" onclick="input('5')">5</button>
+                <button class="btn-num" onclick="input('6')">6</button>
+                <button class="btn-op" onclick="input('-')">−</button>
+
+                <button class="btn-num" onclick="input('1')">1</button>
+                <button class="btn-num" onclick="input('2')">2</button>
+                <button class="btn-num" onclick="input('3')">3</button>
+                <button class="btn-op" onclick="input('+')">+</button>
+
+                <button class="btn-num" onclick="input('0')">0</button>
+                <button class="btn-num" onclick="input('.')">.</button>
+                <button class="btn-op" onclick="deleteLast()">DEL</button>
+                <button class="btn-eq" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Theme Management ---
+        const themeLibrary = [
+            { class: 'midnight-blue', name: 'Midnight' },
+            { class: 'blurple',       name: 'Blurple' },
+            { class: 'yellow-banana', name: 'Banana' },
+            { class: 'vintage',       name: 'Vintage' },
+            { class: 'cyberpunk',     name: 'Cyber' },
+            { class: 'android',       name: 'Android' }
+        ];
+
+        let currentThemeIndex = 0;
+
+        const savedTheme = localStorage.getItem('calcTheme');
+        if (savedTheme !== null) {
+            currentThemeIndex = parseInt(savedTheme);
+            applyTheme();
+        } else {
+            applyTheme();
+        }
+
+        function toggleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themeLibrary.length;
+            localStorage.setItem('calcTheme', currentThemeIndex);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const currentTheme = themeLibrary[currentThemeIndex];
+            document.body.className = currentTheme.class;
+            document.getElementById('themeToggleBtn').innerText = `Theme: ${currentTheme.name}`;
+        }
+
+        // --- Calculator Logic ---
+        const display = document.getElementById('display');
+
+        function input(val) {
+            if (display.innerText === '0' || display.innerText === 'Error') {
+                if (['.', '+', '-', '*', '/', '^', '%'].includes(val)) {
+                    display.innerText += val;
+                } else {
+                    display.innerText = val;
+                }
+            } else {
+                display.innerText += val;
+            }
+        }
+
+        function clearDisplay() {
+            display.innerText = '0';
+        }
+
+        function deleteLast() {
+            if (display.innerText.length === 1 || display.innerText === 'Error') {
+                display.innerText = '0';
+            } else {
+                display.innerText = display.innerText.slice(0, -1);
+            }
+        }
+
+        const sin = (deg) => Math.sin(deg * (Math.PI / 180));
+        const cos = (deg) => Math.cos(deg * (Math.PI / 180));
+        const tan = (deg) => Math.tan(deg * (Math.PI / 180));
+        const log = (val) => Math.log10(val);
+        const ln = (val) => Math.log(val);
+        const sqrt = (val) => Math.sqrt(val);
+
+        function calculate() {
+            let expr = display.innerText
+                .replace(/×/g, '*')
+                .replace(/÷/g, '/')
+                .replace(/−/g, '-')
+                .replace(/\^/g, '**')
+                .replace(/%/g, '/100')
+                .replace(/π/g, 'Math.PI')
+                .replace(/e/g, 'Math.E');
+
+            try {
+                const safeEval = new Function('sin', 'cos', 'tan', 'log', 'ln', 'sqrt', `return ${expr};`);
+                let result = safeEval(sin, cos, tan, log, ln, sqrt);
+                
+                if (!isFinite(result) || isNaN(result)) {
+                    display.innerText = 'Error';
+                    return;
+                }
+
+                if(result % 1 !== 0) result = parseFloat(result.toFixed(8));
+                
+                display.innerText = result;
+            } catch (error) {
+                display.innerText = 'Error';
+            }
+        }
+    </script>
+</body>
+</html>
